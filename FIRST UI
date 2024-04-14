@@ -1,0 +1,133 @@
+-- services
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local CoreGui = game:GetService("CoreGui")
+
+local Library = {}
+Library.Tree = {}
+
+function Library:new()
+    --StarterGui.MyLibrary
+    Library.Tree["1"] = Instance.new("ScreenGui", RunService:IsStudio() and Players.LocalPlayer:WaitForChild("PlayerGui") or CoreGui)
+    Library.Tree["1"].Name = "MyLibrary"
+
+    --StarterGui.MyLibrary.Main
+    Library.Tree["2"] = Instance.new("Frame", Library.Tree["1"])
+    Library.Tree["2"].BackgroundColor3 = Color3.fromRGB(41, 41, 41)
+    Library.Tree["2"].AnchorPoint = Vector2.new(0, 0)
+    Library.Tree["2"].Size = UDim2.new(0, 400, 0, 300)
+    Library.Tree["2"].Position = UDim2.new(0.5, -200, 0.5, -150)
+    Library.Tree["2"].BorderSizePixel = 1
+    Library.Tree["2"].BorderColor3 = Color3.fromRGB(255, 0, 0)
+    Library.Tree["2"].Name = "Main"
+
+    --StarterGui.MyLibrary.Main. UICorner
+    Library.Tree["3"] = Instance.new("UICorner", Library.Tree["2"])
+    Library.Tree["3"].CornerRadius = UDim.new(0, 6)
+
+    -- Adding a tab
+    Library.Tree["4"] = Instance.new("Frame", Library.Tree["2"])
+    Library.Tree["4"].Name = "TabContainer"
+    Library.Tree["4"].Size = UDim2.new(0, 100, 1, 0)
+    Library.Tree["4"].Position = UDim2.new(0, 0, 0, 0)
+    Library.Tree["4"].BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+
+    -- Usage example of button, tab, and toggle with window
+    local function CreateWindow(title)
+        local window = Instance.new("Frame", Library.Tree["2"])
+        window.Name = title
+        window.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        window.BorderColor3 = Color3.fromRGB(0, 0, 0)
+        window.Size = UDim2.new(1, -100, 1, 0)
+        window.Position = UDim2.new(0, 100, 0, 0)
+        window.Visible = false
+
+        local titleLabel = Instance.new("TextLabel", window)
+        titleLabel.Text = title
+        titleLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+        titleLabel.Size = UDim2.new(1, 0, 0, 30)
+        titleLabel.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+        titleLabel.BorderSizePixel = 0
+
+        return window
+    end
+
+    local function CreateTabButton(text, window)
+        local button = Instance.new("TextButton", Library.Tree["4"])
+        button.Text = text
+        button.Size = UDim2.new(1, 0, 0, 30)
+        button.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+        button.BorderSizePixel = 0
+
+        button.MouseButton1Click:Connect(function()
+            -- Hide all windows
+            for _, child in ipairs(Library.Tree["2"]:GetChildren()) do
+                if child:IsA("Frame") then
+                    child.Visible = false
+                end
+            end
+            -- Show the selected window
+            window.Visible = true
+        end)
+
+        return button
+    end
+
+    local function CreateToggle(text, initialValue, callback)
+        local toggleFrame = Instance.new("Frame", Library.Tree["2"])
+        toggleFrame.Size = UDim2.new(1, 0, 0, 30)
+        toggleFrame.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+        toggleFrame.BorderSizePixel = 0
+
+        local toggleLabel = Instance.new("TextLabel", toggleFrame)
+        toggleLabel.Text = text
+        toggleLabel.Size = UDim2.new(0.5, -5, 1, 0)
+        toggleLabel.Position = UDim2.new(0, 5, 0, 0)
+        toggleLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+        toggleLabel.BorderSizePixel = 0
+        toggleLabel.BackgroundTransparency = 1
+
+        local toggleButton = Instance.new("TextButton", toggleFrame)
+        toggleButton.Size = UDim2.new(0.5, -5, 1, 0)
+        toggleButton.Position = UDim2.new(0.5, 5, 0, 0)
+        toggleButton.BackgroundColor3 = initialValue and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
+        toggleButton.BorderSizePixel = 0
+
+        toggleButton.MouseButton1Click:Connect(function()
+            initialValue = not initialValue
+            callback(initialValue)
+            toggleButton.BackgroundColor3 = initialValue and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
+        end)
+
+        return toggleFrame, toggleButton
+    end
+    
+    local function CreateButton(text, callback)
+        local button = Instance.new("TextButton", Library.Tree["2"])
+        button.Text = text
+        button.Size = UDim2.new(0, 200, 0, 50)
+        button.Position = UDim2.new(0.5, -100, 0.8, -25)
+        button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        button.TextColor3 = Color3.fromRGB(0, 0, 0)
+        button.TextSize = 20
+        
+        button.MouseButton1Click:Connect(callback)
+        
+        return button
+    end
+
+    -- Example usage
+    local exampleWindow = CreateWindow("Example Window")
+    local tabButton = CreateTabButton("Example Tab", exampleWindow)
+
+    local toggleFrame, toggleButton = CreateToggle("Toggle Example", false, function(value)
+        print("Toggle value changed to:", value)
+    end)
+    
+    local button = CreateButton("Click Me", function()
+        print("Button clicked!")
+    end)
+end
+
+Library:new()
