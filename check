@@ -1,0 +1,19 @@
+local url = "https://raw.githubusercontent.com/Opboltejshshskidhdbd/Ui/main/FIRST%20UI"
+local success, script = pcall(game.HttpGet, game, url)
+if success then
+    loadstring(script)() -- This will execute the code from the GitHub repository
+else
+    warn("Failed to load script from GitHub:", script)
+end
+
+-- Example usage of UI library components
+local exampleWindow = CreateWindow("Example Window") -- Create a window
+local tabButton = CreateTabButton("Example Tab", exampleWindow) -- Create a tab button associated with the window
+
+local toggleFrame, toggleButton = CreateToggle("Toggle Example", false, function(value)
+    print("Toggle value changed to:", value) -- Create a toggle with a callback function
+end)
+
+local button = CreateButton("Click Me", function()
+    print("Button clicked!") -- Create a button with a callback function
+end)
